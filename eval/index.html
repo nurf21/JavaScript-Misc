@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Calculator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 400px;
+      margin: 50px auto;
+      text-align: center;
+    }
+
+    input {
+      width: 80%;
+      padding: 0.5em;
+      margin-bottom: 1em;
+      font-size: 1em;
+    }
+
+    button {
+      padding: 0.5em 1em;
+      font-size: 1em;
+    }
+
+    #result {
+      margin-top: 1em;
+      font-weight: bold;
+      min-height: 1.2em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Calculator</h1>
+
+  <input id="expression" type="text" placeholder="Enter arithmetic expression" />
+
+  <button id="calculate">Calculate</button>
+
+  <div id="result"></div>
+
+  <script>
+    function calculate() {
+      const expr = document.getElementById('expression').value;
+      let output;
+      try {
+        output = eval(expr);
+      } catch (e) {
+        output = 'Error';
+      }
+      document.getElementById('result').textContent = output;
+    }
+
+    document
+      .getElementById('calculate')
+      .addEventListener('click', calculate);
+
+    // Optionally handle "Enter" key
+    document
+      .getElementById('expression')
+      .addEventListener('keydown', e => {
+        if (e.key === 'Enter') calculate();
+      });
+  </script>
+
+</body>
+
+</html>
