@@ -1,3 +1,31 @@
+// Accessing array[-1]
+// ==================================================
+
+let array = [1, 2, 3];
+
+array = new Proxy(array, {
+  get(target, prop, receiver) {
+    // Only handle string keys that parse to negative integers
+    if (typeof prop === 'string') {
+      const idx = Number(prop);
+      if (Number.isInteger(idx) && idx < 0) {
+        // Compute the “real” index from the end
+        const realIndex = target.length + idx;
+        // Delegate to Reflect.get for correct binding & protos
+        return Reflect.get(target, String(realIndex), receiver);
+      }
+    }
+    // Fallback to default behavior (methods, length, non-numeric props)
+    return Reflect.get(target, prop, receiver);
+  }
+});
+
+// Usage:
+console.log(array[-1]);
+console.log(array[-2]);
+console.log(array.length);
+console.log(array.slice(1));
+
 // Error on reading non-existent property
 // ==================================================
 
