@@ -26,6 +26,52 @@ console.log(array[-2]);
 console.log(array.length);
 console.log(array.slice(1));
 
+// Observable
+// ==================================================
+
+function makeObservable(target) {
+  const handlers = [];
+
+  return new Proxy(target, {
+    get(obj, prop, receiver) {
+      if (prop === 'observe') {
+        // Expose observe(fn) to register handlers
+        return function (handler) {
+          if (typeof handler === 'function') {
+            handlers.push(handler);
+          }
+        };
+      }
+      // Delegate everything else
+      return Reflect.get(obj, prop, receiver);
+    },
+
+    set(obj, prop, value, receiver) {
+      // Apply the property change
+      const success = Reflect.set(obj, prop, value, receiver);
+
+      // Notify all observers
+      if (success) {
+        handlers.forEach(h => h(prop, value));
+      }
+
+      return success;
+    }
+  });
+}
+
+// — Usage example:
+
+let user = {};
+user = makeObservable(user);
+
+user.observe((key, value) => {
+  console.log(`SET ${key}=${value}`);
+});
+
+user.name = "John";
+user.age = 30;
+
 // Error on reading non-existent property
 // ==================================================
 
@@ -42,8 +88,8 @@ function wrap(target) {
 }
 
 // usage
-let user = { name: "John" };
-user = wrap(user);
+let user2 = { name: "John" };
+user2 = wrap(user2);
 
-console.log(user.name);
-console.log(user.age);
+console.log(user2.name);
+console.log(user2.age);
